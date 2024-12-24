@@ -54,4 +54,39 @@
   
   
   
+  
+  
+  <entry>
+    <title>about</title>
+    <link href="/"/>
+    <url>/</url>
+    
+    <content type="html"><![CDATA[<p>这里是 Satoshi。<br>有关我的 GPG 公钥可以在这里找到： <code>info.hms.tax</code><br>你可以通过邮件去联系我： <a href="mailto:&#115;&#x61;&#116;&#111;&#x73;&#x68;&#105;&#49;&#57;&#56;&#51;&#64;&#x7a;&#x6f;&#104;&#x6f;&#109;&#x61;&#105;&#x6c;&#x2e;&#99;&#111;&#x6d;">&#115;&#x61;&#116;&#111;&#x73;&#x68;&#105;&#49;&#57;&#56;&#51;&#64;&#x7a;&#x6f;&#104;&#x6f;&#109;&#x61;&#105;&#x6c;&#x2e;&#99;&#111;&#x6d;</a></p>]]></content>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>分类</title>
+    <link href="/"/>
+    <url>/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>标签</title>
+    <link href="/"/>
+    <url>/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+  </entry>
+  
+  
+  
 </search>
