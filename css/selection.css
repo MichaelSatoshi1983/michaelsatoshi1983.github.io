@@ -60,10 +60,6 @@ figure.highlight {
     box-shadow: 0 5px 10px #a1a1a100;
 }
 
-/* [data-user-color-scheme='dark'] figure.highlight {
-    background: #2d3a4b;
-} */
-
 /* 该伪元素用于展示代码语言,若不需要可删除 */
 /* figure.highlight::before {
     content: attr(data-type);
