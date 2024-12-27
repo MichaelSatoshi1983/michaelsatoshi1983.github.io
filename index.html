@@ -236,6 +236,67 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2024/12/27/go-slice/" target="_self">
+          go_slice
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/12/27/go-slice/" target="_self">
+        <div>
+          最近在看 go 语言的源代码，发现切片挺有意思的。 本质上是数组，实则不然我们先直接上切片的源代码： 12345type slice struct &#123;    array unsafe.Pointer    len   int    cap   int&#125; 我们可以看到结构体的第一项是一个指向底层数组的指针，可能就有疑问，难道切片就是数组吗？可以这么说但是不完全正确：切片其实是一个
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-12-27 08:59" pubdate>
+              2024-12-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Go/" class="category-chain-item">Go</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E6%8A%80%E6%9C%AF/">#技术</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2024/12/24/vscode-cute/" target="_self">
           让你的 VSCode 变得可爱
         </a>

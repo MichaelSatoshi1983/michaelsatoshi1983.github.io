@@ -4,6 +4,31 @@
   
   
   <entry>
+    <title>go_slice</title>
+    <link href="/2024/12/27/go-slice/"/>
+    <url>/2024/12/27/go-slice/</url>
+    
+    <content type="html"><![CDATA[<p>最近在看 go 语言的源代码，发现切片挺有意思的。</p><h1 id="本质上是数组，实则不然"><a href="#本质上是数组，实则不然" class="headerlink" title="本质上是数组，实则不然"></a>本质上是数组，实则不然</h1><p>我们先直接上切片的源代码：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> slice <span class="hljs-keyword">struct</span> &#123;<br>    array unsafe.Pointer<br>    <span class="hljs-built_in">len</span>   <span class="hljs-type">int</span><br>    <span class="hljs-built_in">cap</span>   <span class="hljs-type">int</span><br>&#125;<br></code></pre></td></tr></table></figure><p>我们可以看到结构体的第一项是一个<strong>指向底层数组的指针</strong>，可能就有疑问，难道切片就是数组吗？可以这么说但是不完全正确：切片其实是一个<strong>基于数组实现的动态数据结构</strong>，在程序运行的时候进行动态调整大小。</p><h2 id="len-和-cap-的关系"><a href="#len-和-cap-的关系" class="headerlink" title="len 和 cap 的关系"></a>len 和 cap 的关系</h2><p>我们都知道 cap 表示的是<strong>从切片起始位置到数组末尾可用元素的数量</strong>，所以 <code>len &lt;= cap</code>。<br>我们直接上例子：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">s := <span class="hljs-built_in">make</span>([]<span class="hljs-type">int</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>)<br></code></pre></td></tr></table></figure><p>这段代码使用的是 make 来初始化这个切片，其实我们调用的是<code>runtime.makeslice</code> 这个函数，随后调用 <code>mallocgc</code> 来从内存中开辟出一片区域去存储数据。如果只指定了长度，则默认容量与长度相同；如果指定了长度和容量，则确保 <code>len &lt;= cap</code></p><h2 id="makeslice"><a href="#makeslice" class="headerlink" title="makeslice"></a>makeslice</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">makeslice</span><span class="hljs-params">(et *_type, <span class="hljs-built_in">len</span>, <span class="hljs-built_in">cap</span> <span class="hljs-type">int</span>)</span></span> unsafe.Pointer &#123;<br>    mem, overflow := math.MulUintptr(et.size, <span class="hljs-type">uintptr</span>(<span class="hljs-built_in">cap</span>))<br>    <span class="hljs-keyword">if</span> overflow || mem &gt; maxAlloc || <span class="hljs-built_in">len</span> &lt; <span class="hljs-number">0</span> || <span class="hljs-built_in">len</span> &gt; <span class="hljs-built_in">cap</span> &#123;<br>        panicmakeslicelen()<br>    &#125;<br>    <span class="hljs-keyword">return</span> mallocgc(mem, et, <span class="hljs-literal">true</span>)<br>&#125;<br></code></pre></td></tr></table></figure><p>这段代码首先检查一下所需分配的内存大小，然后检查是否发生了溢出或超出了最大允许值。如果没有问题，它将调用 mallocgc 函数来分配内存，并返回指向新分配内存的指针。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>Go</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>技术</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>让你的 VSCode 变得可爱</title>
     <link href="/2024/12/24/vscode-cute/"/>
     <url>/2024/12/24/vscode-cute/</url>
