@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+  <head>
+    
+
+    
+<script>!function(){var e=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,t=localStorage.getItem("use-color-scheme")||"auto";("dark"===t||e&&"light"!==t)&&document.documentElement.classList.toggle("dark",!0)}()</script>
+    
+
+<meta charset="utf-8" >
+
+<title>OSI 七层模型详解</title>
+<meta name="keywords" content="OSI 七层模型详解, Day 1 Blog">
+<meta name="description" content="物理层（Physical Layer）功能物理层是 OSI 模型的最底层，负责在物理介质上传输原始的比特流（0 和 1）。它直接与物理传输介质打交道，比如网线、光纤、无线信号等。物理层要解决的是设备如何与传输介质连接，以及如何在介质上传输信">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:title" content="OSI 七层模型详解">
+<meta property="og:description" content="物理层（Physical Layer）功能物理层是 OSI 模型的最底层，负责在物理介质上传输原始的比特流（0 和 1）。它直接与物理传输介质打交道，比如网线、光纤、无线信号等。物理层要解决的是设备如何与传输介质连接，以及如何在介质上传输信">
+
+<link rel="shortcut icon" href="/images/favicon.ico">
+<link rel="stylesheet" href="/style/main.css">
+
+  <meta name="generator" content="Hexo 7.3.0"></head>
+  <body>
+    <div id="app" class="main">
+
+<div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://day1.pub">
+        <img class="avatar" src="/images/avatar.webp" alt="logo" width="32px" height="32px">
+      </a>
+      <a href="https://day1.pub">
+        <h1 class="site-title">Day 1 Blog</h1>
+      </a>
+    </div>
+    <div class="right">
+        <i class="icon menu-switch icon-menu-outline" ></i>
+    </div>
+  </div>
+</div>
+
+<div class="menu-container" style="height: 0;opacity: 0;">
+<nav class="menu-list">
+  
+    
+      <a href="/" class="menu purple-link">
+        首页
+      </a>
+    
+  
+    
+      <a href="/categories" class="menu purple-link">
+        分类
+      </a>
+    
+  
+    
+      <a href="/archives" class="menu purple-link">
+        归档
+      </a>
+    
+  
+    
+      <a href="/about" class="menu purple-link">
+        关于
+      </a>
+    
+  
+</nav>
+</div>
+
+
+
+  <div class="content-container">
+    <div class="post-detail">
+      
+      <h2 class="post-title">OSI 七层模型详解</h2>
+      <div class="post-info post-detail-info">
+        <span><i class="icon icon-calendar-outline"></i> 2025-04-07</span>
+        
+      </div>
+      <div class="post-content-wrapper">
+        <div class="post-content">
+          <h1 id="物理层（Physical-Layer）"><a href="#物理层（Physical-Layer）" class="headerlink" title="物理层（Physical Layer）"></a>物理层（Physical Layer）</h1><h2 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h2><p>物理层是 OSI 模型的最底层，负责在物理介质上传输原始的比特流（0 和 1）。它直接与物理传输介质打交道，比如网线、光纤、无线信号等。物理层要解决的是设备如何与传输介质连接，以及如何在介质上传输信号的问题。具体功能包括：定义物理接口标准，像网线接口的形状、针脚数量和排列；规定信号的编码方式，例如将二进制数据转换为适合在介质上传输的电信号或光信号；确定传输速率，如 10Mbps、100Mbps 等；处理信号的传输方向，是单工（只能单向传输，如广播）、半双工（可以双向，但不能同时，如对讲机）还是全双工（可同时双向传输，如电脑上网）。</p>
+<h2 id="常见协议"><a href="#常见协议" class="headerlink" title="常见协议"></a>常见协议</h2><ol>
+<li><strong>EIA&#x2F;TIA - 232</strong>：这是一种常用的物理接口标准，用于计算机与调制解调器、打印机等设备之间的连接。它定义了接口的机械、电气和功能特性，规定了数据传输速率、信号电平以及引脚功能等。比如早期的计算机通过串口连接外部设备，就常遵循 EIA&#x2F;TIA - 232 标准。</li>
+<li><strong>RJ45</strong>：虽然严格来说它是一种接口，但与之相关的标准在物理层也很重要。RJ45  接口是以太网中最常用的连接接口，用于连接计算机网卡和网络设备（如交换机、路由器）。它规定了 8  芯网线的线序排列，不同的线序用于不同的连接场景，如直通线用于连接不同类型设备（计算机与交换机），交叉线用于连接相同类型设备（计算机与计算机），不过现在很多网络设备能自动识别并适应不同线序。</li>
+</ol>
+<h1 id="数据链路层（Data-Link-Layer）"><a href="#数据链路层（Data-Link-Layer）" class="headerlink" title="数据链路层（Data Link Layer）"></a>数据链路层（Data Link Layer）</h1><h2 id="功能-1"><a href="#功能-1" class="headerlink" title="功能"></a>功能</h2><p>数据链路层负责将物理层接收到的原始比特流组织成帧（Frame），并进行错误检测和纠正。它就像一个“包装工”，把杂乱的比特流包装成有序的帧，每个帧包含源地址、目的地址和数据等信息。同时，它还要解决介质访问控制问题，即多个设备共享同一传输介质时，如何有序地发送和接收数据，避免冲突。具体功能包括：成帧，根据特定规则将比特流划分成帧；差错控制，通过循环冗余校验（CRC）等方法检测帧在传输过程中是否出错，并进行简单纠正；流量控制，当发送方和接收方速度不匹配时，防止接收方因来不及处理数据而丢失帧。</p>
+<h2 id="常见协议-1"><a href="#常见协议-1" class="headerlink" title="常见协议"></a>常见协议</h2><ol>
+<li><strong>以太网****协议（<strong><strong>Ethernet</strong></strong>）</strong>：这是目前局域网中最常用的数据链路层协议。它规定了帧的格式，包含前导码、目的  MAC 地址、源 MAC 地址、类型 &#x2F; 长度字段、数据字段和帧校验序列（FCS）等部分。以太网使用 CSMA&#x2F;CD（载波监听多路访问 &#x2F;  冲突检测）机制来解决介质访问控制问题，即设备在发送数据前先监听介质是否空闲，若空闲则发送，同时检测是否发生冲突，若冲突则停止发送并等待随机时间后重试。以太网有不同的速率标准，如  10Mbps 以太网、100Mbps 快速以太网、1000Mbps 千兆以太网等。</li>
+<li><strong>PPP（Point - to - Point Protocol）</strong>：用于在点对点链路（如两台计算机通过串口线直接连接，或通过调制解调器拨号连接）上传输数据。PPP  协议不仅负责成帧，还支持多种网络层协议（如 IP、IPX 等），同时具备认证功能（PAP 和  CHAP），可以验证连接双方的身份，提高安全性。在家庭通过拨号上网的时代，PPP 协议被广泛应用。</li>
+</ol>
+<h1 id="网络层（Network-Layer）"><a href="#网络层（Network-Layer）" class="headerlink" title="网络层（Network Layer）"></a>网络层（Network Layer）</h1><h2 id="功能-2"><a href="#功能-2" class="headerlink" title="功能"></a>功能</h2><p>网络层负责将数据从源端传输到目的端，主要解决路由选择和拥塞控制问题。它就像一个“交通指挥员”，决定数据包在网络中的传输路径。网络层接收来自数据链路层的帧，提取其中的网络层地址（如 IP 地址），根据路由表选择最佳路径将数据包转发出去。同时，当网络出现拥塞时，要采取措施避免网络性能下降。具体功能包括：寻址，为网络中的设备分配网络层地址（如 IPv4 地址或 IPv6 地址），以便区分不同设备；路由选择，通过路由算法计算数据包从源到目的的最佳路径；拥塞控制，当网络流量过大时，采取丢弃数据包、调整路由等方法缓解拥塞。</p>
+<h2 id="常见协议-2"><a href="#常见协议-2" class="headerlink" title="常见协议"></a>常见协议</h2><ol>
+<li><strong>IP</strong><strong>（Internet Protocol）</strong>：分为 IPv4 和 IPv6，是网络层的核心协议。IPv4 采用  32 位地址，如 192.168.1.1，目前仍广泛使用，但由于地址空间有限，逐渐向 IPv6 过渡。IPv6 采用 128  位地址，极大地扩充了地址空间。IP 协议负责将数据包封装成 IP 数据报，包含源 IP 地址和目的 IP 地址，在网络中进行转发。</li>
+<li><strong>ICMP</strong><strong>（Internet Control Message Protocol）</strong>：用于在 IP  网络中传递控制消息，如网络是否可达、主机是否可达、路由是否可用等。常见的 ping 命令就是利用 ICMP 协议来测试网络连通性。当我们使用  ping 命令时，源主机向目的主机发送 ICMP 回显请求报文，目的主机收到后返回 ICMP  回显应答报文，根据是否收到应答报文以及往返时间，可以判断网络是否正常。</li>
+<li><strong>RIP（Routing Information Protocol）</strong>：是一种简单的距离向量路由协议。路由器使用 RIP 协议时，通过定期交换路由信息（以跳数作为度量值，每经过一个路由器跳数加 1）来构建和维护路由表。RIP 协议配置简单，但在大型网络中收敛速度慢，不适合复杂网络环境。</li>
+<li><strong>OSPF（Open Shortest Path First）</strong>：开放最短路径优先协议，是一种链路状态路由协议。它通过收集网络中所有路由器的链路状态信息，使用 Dijkstra 算法计算出到达每个目的网络的最短路径，并生成路由表。OSPF 协议收敛速度快，适合大型复杂网络。</li>
+</ol>
+<h1 id="传输层（Transport-Layer）"><a href="#传输层（Transport-Layer）" class="headerlink" title="传输层（Transport Layer）"></a>传输层（Transport Layer）</h1><h2 id="功能-3"><a href="#功能-3" class="headerlink" title="功能"></a>功能</h2><p>传输层负责为应用层提供端到端的可靠或不可靠的数据传输服务。它就像一座“桥梁”，在源端和目的端的应用程序之间建立连接，确保数据准确无误地传输。传输层接收来自网络层的数据包，根据端口号将数据交付给正确的应用程序进程。具体功能包括：提供可靠传输（如 TCP 协议），通过确认、重传、流量控制和拥塞控制等机制保证数据无差错、按序到达；提供不可靠传输（如 UDP 协议），不保证数据的可靠交付，但传输速度快，适合对实时性要求高但对数据准确性要求相对较低的应用。</p>
+<h2 id="常见协议-3"><a href="#常见协议-3" class="headerlink" title="常见协议"></a>常见协议</h2><ol>
+<li><strong>TCP（Transmission Control Protocol）</strong>：传输控制协议，提供面向连接的、可靠的字节流服务。在传输数据前，需要在源端和目的端之间建立三次握手连接，确保双方准备好传输数据。传输过程中，通过序列号和确认号保证数据的有序传输和完整性，采用滑动窗口机制进行流量控制，避免接收方缓冲区溢出。例如，在浏览器访问网页时，HTTP  协议通常使用 TCP 协议传输数据，确保网页内容完整准确地显示。</li>
+<li><strong>UDP</strong><strong>（<strong><strong>User Datagram Protocol</strong></strong>）</strong>：用户数据报协议，提供无连接的、不可靠的数据传输服务。UDP  协议不需要建立连接，直接将数据封装成 UDP  数据报发送，传输速度快，但可能会出现数据丢失、乱序等情况。像视频流传输（如在线视频播放）、实时语音通话（如微信语音通话）等场景，更注重实时性，对少量数据丢失不太敏感，常使用  UDP 协议。</li>
+</ol>
+<h1 id="会话层（Session-Layer）"><a href="#会话层（Session-Layer）" class="headerlink" title="会话层（Session Layer）"></a>会话层（Session Layer）</h1><h2 id="功能-4"><a href="#功能-4" class="headerlink" title="功能"></a>功能</h2><p>会话层负责建立、管理和终止表示层实体之间的会话连接。它就像一个“协调员”，协调不同应用程序之间的对话。会话层可以在两个节点之间建立多个不同类型的会话，如文件传输会话、远程登录会话等。具体功能包括：会话建立，确定通信双方的身份和通信方式；会话管理，如控制会话的同步、协商会话参数；会话终止，当通信结束时，有序地释放会话资源。</p>
+<h2 id="常见协议-4"><a href="#常见协议-4" class="headerlink" title="常见协议"></a>常见协议</h2><ol>
+<li><strong>NetBIOS（Network Basic Input&#x2F;Output System）</strong>：早期在局域网中广泛使用，用于在计算机之间建立会话，实现文件、打印和通信等服务。NetBIOS 为应用程序提供了一组网络 API，简化了网络编程。例如，在早期的 Windows 网络中，计算机通过 NetBIOS 名称进行通信，实现资源共享。</li>
+<li><strong>RPC</strong><strong>（Remote Procedure Call）</strong>：远程过程调用协议，允许程序调用远程计算机上的过程（函数），就像调用本地过程一样。RPC   隐藏了网络通信的细节，使开发分布式应用程序更加容易。例如，一个服务器程序可以提供一些远程过程供客户端调用，客户端无需了解网络传输和远程服务器的具体实现，直接调用这些远程过程即可获取服务。</li>
+</ol>
+<h1 id="表示层（Presentation-Layer）"><a href="#表示层（Presentation-Layer）" class="headerlink" title="表示层（Presentation Layer）"></a>表示层（Presentation Layer）</h1><h2 id="功能-5"><a href="#功能-5" class="headerlink" title="功能"></a>功能</h2><p>表示层负责处理应用层数据的表示问题，包括数据的编码、加密和解密、压缩和解压缩等。它就像一个“翻译官”，将应用层的数据转换为适合在网络中传输的格式，或者将从网络接收的数据转换为应用层能够理解的格式。具体功能包括：数据编码转换，例如将 ASCII 码转换为 EBCDIC 码，以适应不同系统间的数据交换；数据加密和解密，保护数据在传输过程中的安全性，防止数据被窃取或篡改；数据压缩和解压缩，减少数据传输量，提高传输效率。</p>
+<h2 id="常见协议-5"><a href="#常见协议-5" class="headerlink" title="常见协议"></a>常见协议</h2><ol>
+<li><strong>ASCII（American Standard Code for Information Interchange）</strong>：美国信息交换标准代码，是一种常用的字符编码标准，用 7 位二进制数表示 128 个字符，包括英文字母、数字、标点符号等。在网络通信中，许多应用程序使用 ASCII 码来表示文本数据。</li>
+<li><strong>SSL</strong><strong>&#x2F;<strong><strong>TLS</strong></strong>（Secure Sockets Layer&#x2F;<strong><strong>Transport Layer Security</strong></strong>）</strong>：安全套接层 &#x2F; 传输层安全协议，用于在网络通信中对数据进行加密和解密，确保数据的保密性和完整性。我们在访问 HTTPS 网站时，浏览器和服务器之间就使用 SSL&#x2F;TLS 协议进行加密通信，防止用户信息被窃取，比如在网上银行转账时，保障转账信息的安全。</li>
+<li><strong>JPEG（Joint Photographic Experts Group）</strong>：一种图像压缩标准，用于对静态图像进行压缩。通过去除图像中的冗余信息，在保证图像质量的前提下，大幅减小图像文件的大小，便于在网络上传输和存储。我们在网上看到的大部分图片都是以 JPEG 格式存储和传输的。</li>
+</ol>
+<h1 id="应用层（Application-Layer）"><a href="#应用层（Application-Layer）" class="headerlink" title="应用层（Application Layer）"></a>应用层（Application Layer）</h1><h2 id="功能-6"><a href="#功能-6" class="headerlink" title="功能"></a>功能</h2><p>应用层是 OSI 模型的最高层，直接面向用户，为用户提供网络应用服务。它就像各种“工具”，满足用户在网络环境下的各种需求，如文件传输、电子邮件、网页浏览等。应用层负责与用户交互，接收用户的请求，并将请求转化为网络能够理解的格式，通过下层协议进行传输，同时将接收到的响应数据呈现给用</p>
+<h2 id="常见协议-6"><a href="#常见协议-6" class="headerlink" title="常见协议"></a>常见协议</h2><ol>
+<li><strong>HTTP（Hypertext Transfer Protocol）</strong>：超文本传输协议，用于在 Web 浏览器和  Web 服务器之间传输超文本（如 HTML 网页）。HTTP 协议基于请求 - 响应模式，浏览器向服务器发送 HTTP 请求，服务器收到后返回  HTTP 响应，包含网页内容。我们日常上网浏览网页就是通过 HTTP 协议实现的，例如在浏览器地址栏输入网址后，浏览器会发送 HTTP  请求获取网页数据。</li>
+<li><strong>SMTP（Simple Mail Transfer Protocol）</strong>：简单邮件传输协议，用于发送电子邮件。当我们在邮件客户端（如 Outlook、Foxmail）撰写并发送邮件时，邮件客户端会使用 SMTP 协议将邮件发送到邮件服务器，邮件服务器之间也使用 SMTP 协议进行邮件传输，最终将邮件发送到收件人的邮件服务器。</li>
+<li><strong>POP3（Post Office Protocol - Version 3）</strong>：邮局协议版本  3，用于接收电子邮件。收件人使用邮件客户端通过 POP3 协议从邮件服务器下载邮件到本地计算机，以便离线阅读。现在也常用  IMAP（Internet Message Access Protocol）协议替代 POP3，IMAP  协议可以在服务器上管理邮件，用户在不同设备上访问邮件时能保持邮件状态一致。</li>
+<li><strong>FTP（File Transfer Protocol）</strong>：文件传输协议，用于在不同计算机之间进行文件传输。FTP 提供了登录验证机制，用户需要输入用户名和密码才能访问 FTP 服务器，实现文件的上传和下载。比如网站管理员可以使用 FTP 工具将网站文件上传到服务器，也可以从服务器下载备份文件。</li>
+</ol>
+
+        </div>
+          
+        <div class="top-div">
+          <ol class="top-box"><li class="top-box-item top-box-level-1"><a class="top-box-link" href="#%E7%89%A9%E7%90%86%E5%B1%82%EF%BC%88Physical-Layer%EF%BC%89"><span class="top-box-text">物理层（Physical Layer）</span></a><ol class="top-box-child"><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%8A%9F%E8%83%BD"><span class="top-box-text">功能</span></a></li><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%B8%B8%E8%A7%81%E5%8D%8F%E8%AE%AE"><span class="top-box-text">常见协议</span></a></li></ol></li><li class="top-box-item top-box-level-1"><a class="top-box-link" href="#%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82%EF%BC%88Data-Link-Layer%EF%BC%89"><span class="top-box-text">数据链路层（Data Link Layer）</span></a><ol class="top-box-child"><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%8A%9F%E8%83%BD-1"><span class="top-box-text">功能</span></a></li><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%B8%B8%E8%A7%81%E5%8D%8F%E8%AE%AE-1"><span class="top-box-text">常见协议</span></a></li></ol></li><li class="top-box-item top-box-level-1"><a class="top-box-link" href="#%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88Network-Layer%EF%BC%89"><span class="top-box-text">网络层（Network Layer）</span></a><ol class="top-box-child"><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%8A%9F%E8%83%BD-2"><span class="top-box-text">功能</span></a></li><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%B8%B8%E8%A7%81%E5%8D%8F%E8%AE%AE-2"><span class="top-box-text">常见协议</span></a></li></ol></li><li class="top-box-item top-box-level-1"><a class="top-box-link" href="#%E4%BC%A0%E8%BE%93%E5%B1%82%EF%BC%88Transport-Layer%EF%BC%89"><span class="top-box-text">传输层（Transport Layer）</span></a><ol class="top-box-child"><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%8A%9F%E8%83%BD-3"><span class="top-box-text">功能</span></a></li><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%B8%B8%E8%A7%81%E5%8D%8F%E8%AE%AE-3"><span class="top-box-text">常见协议</span></a></li></ol></li><li class="top-box-item top-box-level-1"><a class="top-box-link" href="#%E4%BC%9A%E8%AF%9D%E5%B1%82%EF%BC%88Session-Layer%EF%BC%89"><span class="top-box-text">会话层（Session Layer）</span></a><ol class="top-box-child"><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%8A%9F%E8%83%BD-4"><span class="top-box-text">功能</span></a></li><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%B8%B8%E8%A7%81%E5%8D%8F%E8%AE%AE-4"><span class="top-box-text">常见协议</span></a></li></ol></li><li class="top-box-item top-box-level-1"><a class="top-box-link" href="#%E8%A1%A8%E7%A4%BA%E5%B1%82%EF%BC%88Presentation-Layer%EF%BC%89"><span class="top-box-text">表示层（Presentation Layer）</span></a><ol class="top-box-child"><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%8A%9F%E8%83%BD-5"><span class="top-box-text">功能</span></a></li><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%B8%B8%E8%A7%81%E5%8D%8F%E8%AE%AE-5"><span class="top-box-text">常见协议</span></a></li></ol></li><li class="top-box-item top-box-level-1"><a class="top-box-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82%EF%BC%88Application-Layer%EF%BC%89"><span class="top-box-text">应用层（Application Layer）</span></a><ol class="top-box-child"><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%8A%9F%E8%83%BD-6"><span class="top-box-text">功能</span></a></li><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%B8%B8%E8%A7%81%E5%8D%8F%E8%AE%AE-6"><span class="top-box-text">常见协议</span></a></li></ol></li></ol>
+        </div>
+          
+      </div>
+    </div>
+
+    
+      <div class="next-post">
+        <a class="purple-link" href="/wu-li-ceng-xiang-jie/">
+          <h3 class="post-title">
+            下一篇：物理层详解
+          </h3>
+        </a>
+      </div>
+    
+  </div>
+
+
+
+
+
+
+
+
+
+
+<footer>
+<div class="site-footer">
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  
+    Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> <a href="https://github.com/f-dong/hexo-theme-minimalism" target="_blank">Theme</a>
+  
+  
+  
+  
+  
+  
+</div>
+</footer>
+
+
+      </div>
+    </div>
+    
+<script id="hexo-configurations"> window.theme_config = {"image":{"lazyload_enable":true,"photo_zoom":"simple-lightbox"}}; window.is_post = true; </script>
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+  </body>
+</html>
+

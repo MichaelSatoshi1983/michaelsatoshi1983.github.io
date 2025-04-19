@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+  <head>
+    
+
+    
+<script>!function(){var e=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,t=localStorage.getItem("use-color-scheme")||"auto";("dark"===t||e&&"light"!==t)&&document.documentElement.classList.toggle("dark",!0)}()</script>
+    
+
+<meta charset="utf-8" >
+
+<title>数据链路层详解</title>
+<meta name="keywords" content="数据链路层详解, Day 1 Blog">
+<meta name="description" content="MAC地址定义MAC 地址，即媒体访问控制地址（Media Access Control Address），也称为物理地址或硬件地址。它是网络设备在数据链路层的唯一标识，用于在局域网中区分不同的设备。
+地址长度与表现形式MAC 地址由 48">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:title" content="数据链路层详解">
+<meta property="og:description" content="MAC地址定义MAC 地址，即媒体访问控制地址（Media Access Control Address），也称为物理地址或硬件地址。它是网络设备在数据链路层的唯一标识，用于在局域网中区分不同的设备。
+地址长度与表现形式MAC 地址由 48">
+
+<link rel="shortcut icon" href="/images/favicon.ico">
+<link rel="stylesheet" href="/style/main.css">
+
+  <meta name="generator" content="Hexo 7.3.0"></head>
+  <body>
+    <div id="app" class="main">
+
+<div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://day1.pub">
+        <img class="avatar" src="/images/avatar.webp" alt="logo" width="32px" height="32px">
+      </a>
+      <a href="https://day1.pub">
+        <h1 class="site-title">Day 1 Blog</h1>
+      </a>
+    </div>
+    <div class="right">
+        <i class="icon menu-switch icon-menu-outline" ></i>
+    </div>
+  </div>
+</div>
+
+<div class="menu-container" style="height: 0;opacity: 0;">
+<nav class="menu-list">
+  
+    
+      <a href="/" class="menu purple-link">
+        首页
+      </a>
+    
+  
+    
+      <a href="/categories" class="menu purple-link">
+        分类
+      </a>
+    
+  
+    
+      <a href="/archives" class="menu purple-link">
+        归档
+      </a>
+    
+  
+    
+      <a href="/about" class="menu purple-link">
+        关于
+      </a>
+    
+  
+</nav>
+</div>
+
+
+
+  <div class="content-container">
+    <div class="post-detail">
+      
+      <h2 class="post-title">数据链路层详解</h2>
+      <div class="post-info post-detail-info">
+        <span><i class="icon icon-calendar-outline"></i> 2025-04-07</span>
+        
+      </div>
+      <div class="post-content-wrapper">
+        <div class="post-content">
+          <h1 id="MAC地址"><a href="#MAC地址" class="headerlink" title="MAC地址"></a>MAC地址</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>MAC 地址，即媒体访问控制地址（Media Access Control Address），也称为物理地址或硬件地址。它是网络设备在数据链路层的唯一标识，用于在局域网中区分不同的设备。</p>
+<h2 id="地址长度与表现形式"><a href="#地址长度与表现形式" class="headerlink" title="地址长度与表现形式"></a>地址长度与表现形式</h2><p>MAC 地址由 48 位二进制数组成，为了便于阅读和书写，通常将其以十六进制数表示，每两个十六进制数之间用冒号分隔。例如，“00:11:22:33:44:55” 就是一个典型的 MAC 地址表示形式。</p>
+<h3 id="地址的组成"><a href="#地址的组成" class="headerlink" title="地址的组成"></a>地址的组成</h3><ul>
+<li><strong>厂商代码（OUI，Organizationally Unique Identifier）</strong>：MAC  地址的前 24 位是厂商代码，由电气和电子工程师协会（IEEE）统一分配给各个网络设备制造商。不同的厂商拥有不同的 OUI，这就如同每个厂商的  “身份证前缀”，用于标识设备的生产厂家。例如，苹果公司的部分设备 MAC 地址前 24 位可能是 “AC:1F:6B”。</li>
+<li><strong>设备序列号</strong>：后 24 位是设备序列号，由设备制造商自行分配，用于在该厂商生产的所有设备中唯一标识每一个设备。这部分号码在厂商内部必须保证唯一性。通过结合厂商代码和设备序列号，MAC 地址在全球范围内具有唯一性，确保了网络中每台设备在数据链路层的标识独一无二。</li>
+</ul>
+<h1 id="以太网帧结构"><a href="#以太网帧结构" class="headerlink" title="以太网帧结构"></a>以太网帧结构</h1><p>以太网帧是数据链路层用于传输数据的基本单位，不同版本的以太网帧结构可能略有差异，但常见的以太网帧结构包含以下几个部分：</p>
+<p><strong>前导码（Preamble）</strong></p>
+<ul>
+<li><strong>长度</strong>：7 个字节。</li>
+<li><strong>内容</strong>：由 7 个字节的 10101010 序列组成。 </li>
+<li><strong>功能</strong>：前导码的主要作用是使接收端的物理层电路达到稳定同步状态，为接收后续的有效数据做好准备。在数据传输开始时，接收端需要一定时间来调整其时钟和信号处理电路，前导码提供了这样一个过渡阶段。</li>
+</ul>
+<p><strong>目的地址（Destination Address）</strong></p>
+<ul>
+<li><strong>长度</strong>：6 字节。</li>
+<li><strong>内容</strong>：包含接收方设备的 MAC 地址。</li>
+<li><strong>功能</strong>：指明该帧数据的接收目标，网络中的设备通过对比目的地址来判断是否接收该帧。只有当设备的 MAC 地址与帧中的目的地址完全匹配时，才会接收并处理该帧的数据。</li>
+</ul>
+<p>**源地址（**<strong>Source</strong> <strong>Address）</strong></p>
+<ul>
+<li><strong>长度</strong>：6 字节。</li>
+<li><strong>内容</strong>：包含发送方设备的 MAC 地址。</li>
+<li><strong>功能</strong>：标识帧数据的发送源，接收方可以根据源地址了解数据的来源，以便进行响应或其他操作。同时，在网络故障排查或安全审计等场景中，源地址有助于追踪数据的起始点。</li>
+</ul>
+<p><strong>类型（Type）</strong></p>
+<ul>
+<li><strong>长度</strong>：2 字节。</li>
+<li><strong>内容</strong>：用于标识上层使用的协议类型。</li>
+<li><strong>功能</strong>：当数据链路层接收到帧后，通过类型字段可以知道应该将帧中的数据传递给上层的哪个协议进行处理。例如，值为 0x0800 表示上层使用的是 IP 协议，0x0806 表示 ARP 协议等。这样，数据链路层能够正确地将数据分流到相应的上层协议模块。</li>
+</ul>
+<p><strong>数据（Data）</strong></p>
+<ul>
+<li><strong>长度</strong>：46 - 1500 字节。</li>
+<li><strong>内容</strong>：承载上层协议（如网络层的 IP 数据包）的数据。</li>
+<li><strong>功能</strong>：这是以太网帧中真正需要传输的有效信息部分，包含了网络层及以上层次要传递的数据。由于不同上层协议的数据长度可能不同，以太网规定了数据字段的最小和最大长度限制，以保证帧结构的规范性和数据传输的可靠性。如果上层数据不足  46 字节，需要进行填充；如果超过 1500 字节，则需要进行分片处理。</li>
+</ul>
+<p><strong>FCS（<strong><strong>帧校验序列</strong></strong>，Frame Check Sequence）</strong></p>
+<ul>
+<li><strong>长度</strong>：4 字节。</li>
+<li><strong>内容</strong>：采用循环冗余校验（CRC）算法计算得出的校验码。</li>
+<li><strong>功能</strong>：用于检测帧在传输过程中是否出现错误。发送方在生成帧时，根据帧中的数据部分计算出 FCS  值，并将其添加到帧的末尾。接收方在接收到帧后，使用相同的 CRC 算法对接收的数据重新计算 FCS 值，并与帧中携带的 FCS  值进行比较。如果两者相等，则认为帧在传输过程中没有发生错误；否则，说明帧出现了错误，接收方将丢弃该帧，并要求发送方重新发送。</li>
+</ul>
+<h2 id="CSMA-CD-原理"><a href="#CSMA-CD-原理" class="headerlink" title="CSMA&#x2F;CD 原理"></a>CSMA&#x2F;CD 原理</h2><h2 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h2><p>CSMA&#x2F;CD，即载波监听多路访问 &#x2F; 冲突检测（Carrier Sense Multiple Access with Collision  Detection），是以太网在共享介质环境下使用的一种介质访问控制方法，主要用于解决多个节点如何共享同一传输介质的问题。</p>
+<h2 id="载波监听（Carrier-Sense）"><a href="#载波监听（Carrier-Sense）" class="headerlink" title="载波监听（Carrier Sense）"></a><strong>载波监听（Carrier Sense）</strong></h2><ul>
+<li><strong>原理</strong>：每个节点在发送数据之前，都会持续监听共享介质（如同轴电缆）上的信号状态。通过监听，节点可以判断当前介质是否正在被其他节点使用。如果监听到介质上有信号传输（即载波存在），则表示介质忙，节点暂时不发送数据，继续等待；只有当监听到介质空闲（即没有载波信号），并且持续一段时间（称为帧间最小间隔）后，节点才认为介质可用，准备发送数据。</li>
+<li><strong>目的</strong>：载波监听的目的是尽量减少冲突的发生，避免多个节点同时发送数据导致信号干扰，提高信道的利用率。</li>
+</ul>
+<h2 id="多路访问（Multiple-Access）"><a href="#多路访问（Multiple-Access）" class="headerlink" title="多路访问（Multiple Access）"></a><strong>多路访问（Multiple Access）</strong></h2><ul>
+<li><strong>原理</strong>：多个节点可以同时连接到同一共享介质上，每个节点都有权限竞争使用该介质进行数据传输。这意味着任何一个节点都可以在监听到介质空闲时尝试发送数据，没有节点具有绝对的传输优先权。</li>
+<li><strong>特点</strong>：这种方式允许多个节点灵活地接入网络，但也不可避免地带来了冲突的可能性。因为多个节点可能同时监听到介质空闲并尝试发送数据，从而导致冲突发生。</li>
+</ul>
+<h2 id="冲突检测（Collision-Detection）"><a href="#冲突检测（Collision-Detection）" class="headerlink" title="冲突检测（Collision Detection）"></a><strong>冲突检测（Collision Detection）</strong></h2><ul>
+<li><strong>原理</strong>：节点在发送数据的同时，会持续检测介质上的信号。由于在共享介质环境下，多个节点的信号会叠加在总线上，如果有两个或多个节点同时发送数据，总线上的信号电平变化幅度会超过正常传输信号的幅度，节点通过检测这种异常的信号变化来判断是否发生了冲突。一旦检测到冲突，节点会立即停止发送当前的数据，并发送一个冲突加强信号（通常是若干比特的干扰信号），以便让总线上其他节点都能尽快知道发生了冲突。</li>
+<li><strong>目的</strong>：冲突检测能够及时发现冲突的发生，避免节点在冲突发生后继续无效地发送数据，浪费信道资源。通过发送冲突加强信号，通知所有节点停止当前传输，重新进入竞争发送状态。</li>
+</ul>
+<h2 id="冲突处理"><a href="#冲突处理" class="headerlink" title="冲突处理"></a><strong>冲突处理</strong></h2><ul>
+<li><strong>原理</strong>：当节点检测到冲突并发送冲突加强信号后，会等待一段随机时间（称为退避时间），然后再次尝试发送数据。退避时间的计算通常采用二进制指数退避算法，即每次冲突后，退避时间会以  2 的幂次方增长（但有一个最大值限制）。例如，第一次冲突后，退避时间可能是 0 - 1  个时间片（时间片是一个固定的时间单位）之间的随机值；第二次冲突后，退避时间可能是 0 - 2  个时间片之间的随机值，以此类推。这样可以避免多个节点在冲突后同时再次尝试发送数据，从而减少再次冲突的可能性。</li>
+<li><strong>目的</strong>：通过随机退避和退避时间的指数增长机制，尽量减少连续冲突的发生，使网络能够在冲突发生后尽快恢复正常的数据传输，提高网络的稳定性和效率。当达到最大重传次数后，如果数据仍然无法成功发送，节点可能会报告错误，通知上层协议进行处理。</li>
+</ul>
+
+        </div>
+          
+        <div class="top-div">
+          <ol class="top-box"><li class="top-box-item top-box-level-1"><a class="top-box-link" href="#MAC%E5%9C%B0%E5%9D%80"><span class="top-box-text">MAC地址</span></a><ol class="top-box-child"><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%AE%9A%E4%B9%89"><span class="top-box-text">定义</span></a></li><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%9C%B0%E5%9D%80%E9%95%BF%E5%BA%A6%E4%B8%8E%E8%A1%A8%E7%8E%B0%E5%BD%A2%E5%BC%8F"><span class="top-box-text">地址长度与表现形式</span></a><ol class="top-box-child"><li class="top-box-item top-box-level-3"><a class="top-box-link" href="#%E5%9C%B0%E5%9D%80%E7%9A%84%E7%BB%84%E6%88%90"><span class="top-box-text">地址的组成</span></a></li></ol></li></ol></li><li class="top-box-item top-box-level-1"><a class="top-box-link" href="#%E4%BB%A5%E5%A4%AA%E7%BD%91%E5%B8%A7%E7%BB%93%E6%9E%84"><span class="top-box-text">以太网帧结构</span></a><ol class="top-box-child"><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#CSMA-CD-%E5%8E%9F%E7%90%86"><span class="top-box-text">CSMA&#x2F;CD 原理</span></a></li><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%AE%9A%E4%B9%89-1"><span class="top-box-text">定义</span></a></li><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E8%BD%BD%E6%B3%A2%E7%9B%91%E5%90%AC%EF%BC%88Carrier-Sense%EF%BC%89"><span class="top-box-text">载波监听（Carrier Sense）</span></a></li><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%A4%9A%E8%B7%AF%E8%AE%BF%E9%97%AE%EF%BC%88Multiple-Access%EF%BC%89"><span class="top-box-text">多路访问（Multiple Access）</span></a></li><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%86%B2%E7%AA%81%E6%A3%80%E6%B5%8B%EF%BC%88Collision-Detection%EF%BC%89"><span class="top-box-text">冲突检测（Collision Detection）</span></a></li><li class="top-box-item top-box-level-2"><a class="top-box-link" href="#%E5%86%B2%E7%AA%81%E5%A4%84%E7%90%86"><span class="top-box-text">冲突处理</span></a></li></ol></li></ol>
+        </div>
+          
+      </div>
+    </div>
+
+    
+  </div>
+
+
+
+
+
+
+
+
+
+
+<footer>
+<div class="site-footer">
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  
+    Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> <a href="https://github.com/f-dong/hexo-theme-minimalism" target="_blank">Theme</a>
+  
+  
+  
+  
+  
+  
+</div>
+</footer>
+
+
+      </div>
+    </div>
+    
+<script id="hexo-configurations"> window.theme_config = {"image":{"lazyload_enable":true,"photo_zoom":"simple-lightbox"}}; window.is_post = true; </script>
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+  </body>
+</html>
+
