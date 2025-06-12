@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>undefined&#39;s Blog</title>
+  
+  <subtitle>1</subtitle>
+  <link href="http://example.com/atom.xml" rel="self"/>
+  
+  <link href="http://example.com/"/>
+  <updated>2025-06-12T11:53:07.942Z</updated>
+  <id>http://example.com/</id>
+  
+  <author>
+    <name>Michael</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Go Context 控制并发的核心机制</title>
+    <link href="http://example.com/posts/80a99c2d/"/>
+    <id>http://example.com/posts/80a99c2d/</id>
+    <published>2025-03-22T06:12:43.000Z</published>
+    <updated>2025-06-12T11:53:07.942Z</updated>
+    
+    <content type="html"><![CDATA[<p>Go 的 <code>context</code> 包是并发编程的核心工具，他的设计通过统一接口简化了 goroutine 的生命周期管理。其实核心就在于 <code>context.Context</code> 接口的四个方法：<code>Deadline()</code>、<code>Done()</code>、<code>Err()</code> 和 <code>Value(key)</code>。但是呢 <code>cancelCtx</code> 和 <code>timerCtx</code> 是其实现的关键结构，分别用于处理主动取消和超时取消。</p><h1 id="取消流程"><a href="#取消流程" class="headerlink" title="取消流程"></a>取消流程</h1><p><code>cancelCtx</code> 是支持取消操作的核心结构，源码：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> cancelCtx <span class="keyword">struct</span> &#123;</span><br><span class="line">    Context</span><br><span class="line">    mu       sync.Mutex</span><br><span class="line">    done     atomic.Value</span><br><span class="line">    children <span class="keyword">map</span>[canceler]<span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">    err      <span class="type">error</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="done-channel"><a href="#done-channel" class="headerlink" title="done channel"></a>done channel</h2><p>当调用 <code>cancel()</code> 方法的时候，他会首先会标记错误状态（比如说 <code>Canceled</code> 或 <code>DeadlineExceeded</code>），并通过 <code>closedchan</code> 去关闭 <code>done</code> channel。具体步骤如下：</p><ul><li><strong>原子操作保护</strong> ：使用互斥锁 <code>mu</code> 确保并发安全，防止多次调用 <code>cancel()</code>。</li><li><strong>错误状态标记</strong> ：将 <code>err</code> 字段设置为指定错误值（如 <code>Canceled</code>），后续调用 <code>Err()</code> 会返回该值。</li><li><strong>关闭 <code>done</code> channel</strong> ：通过 <code>closedchan</code>（一个已关闭的空结构体 channel）替换原 <code>done</code> channel，触发响应 。</li></ul><h2 id="取消子节点"><a href="#取消子节点" class="headerlink" title="取消子节点"></a><strong>取消子节点</strong></h2><p><code>cancelCtx</code> 还维护了一个子节点集合（<code>children map[canceler]struct&#123;&#125;</code>），当调用 <code>cancel()</code> 时会遍历所有子节点并<strong>递归</strong>调用它们的 <code>cancel()</code> 方法。简单来说只要执行了这个，那么就能确定取消信号能在父节点之间传播下去了：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> child := <span class="keyword">range</span> c.children &#123;</span><br><span class="line">    child.cancel(<span class="literal">false</span>, err, <span class="literal">false</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><ul><li><p><strong>子节点类型</strong> ：子节点可能是 <code>cancelCtx</code> 或 <code>timerCtx</code>，均实现 <code>canceler</code> 接口。</p></li><li><p><strong>传播机制</strong> ：递归调用保证父节点取消时，所有子节点同步被取消</p></li></ul><h2 id="从父节点删除自己"><a href="#从父节点删除自己" class="headerlink" title="从父节点删除自己"></a><strong>从父节点删除自己</strong></h2><p>假设当前 <code>cancelCtx</code> 的父节点也是可取消的contetxt（如 <code>cancelCtx</code> 或 <code>timerCtx</code>），那么就去调用 <code>removeChild</code> 从父节点的子节点集合中把自己删掉，释放资源：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> p, ok := c.Context.(*cancelCtx); ok &#123;</span><br><span class="line">    p.mu.Lock()</span><br><span class="line">    <span class="keyword">if</span> s, ok := p.children[c]; ok &#123;</span><br><span class="line">        <span class="built_in">delete</span>(p.children, c)</span><br><span class="line">    &#125;</span><br><span class="line">    p.mu.Unlock()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="懒加载"><a href="#懒加载" class="headerlink" title="懒加载"></a>懒加载</h2><p><code>done</code> channel 用的是懒加载策略（通过 <code>atomic.Value</code> 存储），只会在首次调用 <code>Done()</code> 的时候去初始化。通过这个方式可以优化内存占用，但是还是需要在并发访问时确保原子性 。</p><h1 id="timerCtx-的超时处理"><a href="#timerCtx-的超时处理" class="headerlink" title="timerCtx 的超时处理"></a><code>timerCtx</code> 的超时处理</h1><p><code>timerCtx</code> 直接继承了 <code>cancelCtx</code>，通过增加一个定时器字段就可以实现超时取消：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> timerCtx <span class="keyword">struct</span> &#123;</span><br><span class="line">    cancelCtx</span><br><span class="line">    timer *time.Timer</span><br><span class="line">    deadline time.Time</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="WithDeadline"><a href="#WithDeadline" class="headerlink" title="WithDeadline"></a>WithDeadline</h2><p>当调用 <code>context.WithDeadline(parent Context, deadline time.Time)</code> 的时候，发生了：</p><ul><li><strong>计算剩余时间</strong> ：假设 <code>deadline</code> 过了，那么立即取消；否则计算剩余时间 <code>d := t.deadline.Sub(now)</code>。</li><li><strong>启动定时器</strong> ：创建一个 <code>time.Timer</code>，在 <code>d</code> 时间后触发 <code>cancel()</code> 方法：</li></ul><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">t.timer = time.AfterFunc(d, <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">    t.cancel(<span class="literal">true</span>, DeadlineExceeded, <span class="literal">false</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure><ul><li><strong>传播机制</strong> ：超时触发后，<code>timerCtx</code> 会调用 <code>cancel()</code>，继承 <code>cancelCtx</code> 的递归取消逻辑。</li></ul><h2 id="提前取消与资源释放"><a href="#提前取消与资源释放" class="headerlink" title="提前取消与资源释放"></a><strong>提前取消与资源释放</strong></h2><p>如果说定时器触发前就调用 <code>cancel()</code> 的话，就得手动停止定时器以避免资源泄漏：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *timerCtx)</span></span> cancel(removeFromParent <span class="type">bool</span>, err <span class="type">error</span>, manual <span class="type">bool</span>) &#123;</span><br><span class="line">    c.cancelCtx.cancel(removeFromParent, err, manual)</span><br><span class="line">    <span class="keyword">if</span> c.timer.Stop() &#123;</span><br><span class="line">        <span class="comment">// 定时器未触发，释放资源</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>这个里面还涉及了竞态处理：</p><ul><li><strong>竞态处理</strong> ：<code>Stop()</code> 返回布尔值，确保定时器未触发时才释放资源，避免 race condition。</li></ul><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><code>context</code> 的设计通过接口抽象还有组合模式实现了简洁高效的并发控制。<code>cancelCtx</code> 的递归取消和 <code>timerCtx</code> 的定时器机制共同实现了 Go 并发模型的核心能力。</p><p><del>当然了你如果不想用的话也是可以手动传递 channel 实现取消通知之类的方法啦。</del></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;Go 的 &lt;code&gt;context&lt;/code&gt; 包是并发编程的核心工具，他的设计通过统一接口简化了 goroutine 的生命周期管理。其实核心就在于 &lt;code&gt;context.Context&lt;/code&gt; 接口的四个方法：&lt;code&gt;Deadline()&lt;/code</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Go的连续栈</title>
+    <link href="http://example.com/posts/cc4c72ab/"/>
+    <id>http://example.com/posts/cc4c72ab/</id>
+    <published>2024-11-13T01:12:22.000Z</published>
+    <updated>2025-06-12T12:07:41.538Z</updated>
+    
+    <content type="html"><![CDATA[<p>连续栈这个概念是go 1.3版本引入的，它能通过动态调整栈空间的大小，解决传统固定栈或分段栈的缺陷。</p><h1 id="栈在go语言里面的演变"><a href="#栈在go语言里面的演变" class="headerlink" title="栈在go语言里面的演变"></a>栈在go语言里面的演变</h1><p>栈（Stack）是一种个遵循“后进先出”（当为在木桶里面装馕饼吃）原则的线性数据结构，主要来存储函数调用时的局部变量、参数和返回地址等信息。在传统编程语言中，栈通常被分配为固定大小的内存块，如果我们的程序递归过深或者是说局部变量过多，则可能导致<strong>栈溢出</strong> （Stack Overflow）。为解决这一问题，Go语言早期采用<strong>分段栈</strong> （Segmented Stacks）方案——每个goroutine初始分配8KB栈空间，当栈不足时通过链表扩展新的栈片段。然而，这种方案存在内存碎片化和频繁链表跳转的性能损耗。从Go 1.3起，Go引入了<strong>连续栈</strong>机制，通过动态迁移栈内容实现无缝扩容。</p><h1 id="核心机制"><a href="#核心机制" class="headerlink" title="核心机制"></a>核心机制</h1><h2 id="边界检测与溢出检测"><a href="#边界检测与溢出检测" class="headerlink" title="边界检测与溢出检测"></a>边界检测与溢出检测</h2><p>每个goroutine的结构体中维护着两个关键字段：<code>stackbase</code>（栈底地址）还有 <code>stackguard</code>（栈保护边界）。在函数调用的入口，编译器会插入汇编指令（如<code>CMPQ SP, g_stackguard</code>），把当前栈指针（SP）和<code>stackguard</code>比较。假设SP低于<code>stackguard</code>，那么触发了栈溢出检测。例如，以下伪代码展示了这一逻辑：</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 函数调用时的栈检查（伪代码）</span></span><br><span class="line"><span class="keyword">if</span> SP &lt; g.stackguard &#123;</span><br><span class="line">    runtime.morestack()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="扩容与缩容"><a href="#扩容与缩容" class="headerlink" title="扩容与缩容"></a>扩容与缩容</h2><ul><li><p><strong>扩容流程</strong> ：检测到栈溢出的时候，运行时会分配一块<strong>原栈两倍大小</strong>的新栈（例如从xKB扩展到2xKB），然后再把旧栈里面的数据完整复制到新栈里面去。然后，去更新goroutine的<code>stackbase</code>和<code>stackguard</code>让他俩指向新栈，最后跳转回原函数继续执行。</p></li><li><p><strong>缩容机制</strong> ：如果说一个goroutine长时间未使用大栈空间，运行时会在垃圾回收（GC）时检测空闲栈内存，并且把栈大小缩减至合理阈值（如恢复到xKB），来减少内存占用。</p></li></ul><h2 id="栈迁移与指针调整"><a href="#栈迁移与指针调整" class="headerlink" title="栈迁移与指针调整"></a><strong>栈迁移与指针调整</strong></h2><p>栈在扩容时，运行时需确保所有指向旧栈的指针依然可用。Go通过<strong>逃逸分析</strong> （Escape Analysis）追踪栈上的变量的生命周期，然后在迁移的时候更新所有活跃的指针的地址。这个过程需要依赖编译器的元数据记录变量在栈里面的偏移量。</p><h1 id="好在哪里"><a href="#好在哪里" class="headerlink" title="好在哪里"></a>好在哪里</h1><ul><li><p><strong>内存高效利用</strong> ：避免了分段栈的碎片化问题，栈空间按需分配而且是连续的，大大的提升内存利用率</p></li><li><p><strong>性能优化</strong> ：比起分段栈的链表跳转的话，连续栈迁移后函数调用无需额外跳转直接调用，降低间接寻址开销</p></li><li><p><strong>安全性增强</strong> ：栈保护边界（<code>stackguard</code>）还有硬件页的保护机制结合，能及时捕获栈溢出漏洞</p></li></ul><h1 id="坏在哪里"><a href="#坏在哪里" class="headerlink" title="坏在哪里"></a>坏在哪里</h1><p><del>没有缺点！</del></p><ul><li><p><strong>扩容成本</strong> ：栈复制依然需要消耗时间，特别是在频繁扩容场景下可能影响性能。所以，Go运行时通过<strong>预分配策略</strong> （如初始栈大小设为2KB而非8KB）来减少扩容次数</p></li><li><p><strong>指针调整复杂度</strong> ：栈迁移需精确更新所有的活跃的指针，这对编译器和运行时的协同提出了更高要求</p></li></ul>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;连续栈这个概念是go 1.3版本引入的，它能通过动态调整栈空间的大小，解决传统固定栈或分段栈的缺陷。&lt;/p&gt;
+&lt;h1 id=&quot;栈在go语言里面的演变&quot;&gt;&lt;a href=&quot;#栈在go语言里面的演变&quot; class=&quot;headerlink&quot; title=&quot;栈在go语言里面的演变&quot;</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+</feed>
