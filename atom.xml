@@ -3,11 +3,11 @@
   <title>undefined&#39;s Blog</title>
   
   <subtitle>1</subtitle>
-  <link href="http://example.com/atom.xml" rel="self"/>
+  <link href="https://undefined.today/atom.xml" rel="self"/>
   
-  <link href="http://example.com/"/>
+  <link href="https://undefined.today/"/>
   <updated>2025-06-12T11:53:07.942Z</updated>
-  <id>http://example.com/</id>
+  <id>https://undefined.today/</id>
   
   <author>
     <name>Michael</name>
@@ -18,8 +18,8 @@
   
   <entry>
     <title>Go Context 控制并发的核心机制</title>
-    <link href="http://example.com/posts/80a99c2d/"/>
-    <id>http://example.com/posts/80a99c2d/</id>
+    <link href="https://undefined.today/posts/80a99c2d/"/>
+    <id>https://undefined.today/posts/80a99c2d/</id>
     <published>2025-03-22T06:12:43.000Z</published>
     <updated>2025-06-12T11:53:07.942Z</updated>
     
@@ -38,8 +38,8 @@
   
   <entry>
     <title>Go的连续栈</title>
-    <link href="http://example.com/posts/cc4c72ab/"/>
-    <id>http://example.com/posts/cc4c72ab/</id>
+    <link href="https://undefined.today/posts/cc4c72ab/"/>
+    <id>https://undefined.today/posts/cc4c72ab/</id>
     <published>2024-11-13T01:12:22.000Z</published>
     <updated>2025-06-12T12:07:41.538Z</updated>
     
