@@ -1,12 +1,1 @@
-* {
-    margin: 0;
-    padding: 0;
-}
-
-ul,ol {
-    list-style: none;
-}
-
-a {
-    text-decoration: none;
-}
+*{margin:0;padding:0}ol,ul{list-style:none}a{text-decoration:none}
