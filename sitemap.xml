@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://undefined.today/posts/5f21ce2f.html</loc>
+    
+    <lastmod>2025-07-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://undefined.today/posts/fc539c61.html</loc>
     
     <lastmod>2025-07-03</lastmod>
@@ -58,7 +67,7 @@
 
   <url>
     <loc>https://undefined.today/</loc>
-    <lastmod>2025-07-03</lastmod>
+    <lastmod>2025-07-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -66,14 +75,14 @@
   
   <url>
     <loc>https://undefined.today/tags/go/</loc>
-    <lastmod>2025-07-03</lastmod>
+    <lastmod>2025-07-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://undefined.today/tags/Go-%E7%89%9B%E9%80%BC%E4%B9%8B%E8%B7%AF/</loc>
-    <lastmod>2025-07-03</lastmod>
+    <lastmod>2025-07-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
