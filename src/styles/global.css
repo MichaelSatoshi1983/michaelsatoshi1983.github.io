@@ -5,20 +5,42 @@
 
 :root,
 html[data-theme="light"] {
-  --background: #fdfdfd;
-  --foreground: #282728;
-  --accent: #006cac;
-  --muted: #e6e6e6;
-  --border: #ece9e9;
+  --background: #ffffff;
+  --foreground: #000000;
+  --accent: #0066cc;
+  --accent-secondary: #ff3399;
+  --muted: #f0f0f0;
+  --border: #cccccc;
+  --highlight: #ffff00;
 }
 
 html[data-theme="dark"] {
-  --background: #212737;
-  --foreground: #eaedf3;
-  --accent: #ff6b01;
-  --muted: #343f60;
-  --border: #ab4b08;
+  --background: #000033;
+  --foreground: #ffffff;
+  --accent: #33ccff;
+  --accent-secondary: #9933ff;
+  --muted: #000066;
+  --border: #336699;
+  --highlight: #ffcc00;
 }
+
+
+/*:root,*/
+/*html[data-theme="light"] {*/
+/*  --background: #fdfdfd;*/
+/*  --foreground: #282728;*/
+/*  --accent: #006cac;*/
+/*  --muted: #e6e6e6;*/
+/*  --border: #ece9e9;*/
+/*}*/
+
+/*html[data-theme="dark"] {*/
+/*  --background: #212737;*/
+/*  --foreground: #eaedf3;*/
+/*  --accent: #ff6b01;*/
+/*  --muted: #343f60;*/
+/*  --border: #ab4b08;*/
+/*}*/
 
 @theme inline {
   --color-background: var(--background);
